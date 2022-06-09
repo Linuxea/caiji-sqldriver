@@ -10,7 +10,6 @@ type CjSqlTx struct {
 }
 
 func (tx *CjSqlTx) Commit() (err error) {
-	sqlDriverLogger.Debug("Commit tx")
 	if err := tx.Tx.Commit(); err != nil {
 		return err
 	}
@@ -21,7 +20,6 @@ func (tx *CjSqlTx) Commit() (err error) {
 }
 
 func (tx *CjSqlTx) Rollback() (err error) {
-	sqlDriverLogger.Debug("Rollback tx")
 	if err := tx.Tx.Rollback(); err != nil {
 		return err
 	}

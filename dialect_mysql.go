@@ -11,5 +11,4 @@ func init() {
 	}
 
 	gorm.RegisterDialect("cjmysql", dialect)
-	sqlDriverLogger.Debug("注册方言 cjmysql")
 }

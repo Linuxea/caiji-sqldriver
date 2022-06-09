@@ -2,8 +2,6 @@ package cjsqldriver
 
 import (
 	"math/rand"
-
-	"code.com/tars/goframework/kissgo/appzaplog/zap"
 )
 
 type Policy interface {
@@ -70,7 +68,6 @@ func (w weightPolicy) resolve(conns []*weightResolve) *connectionItem {
 	}
 
 	randNum := w.R.Intn(step) + 1
-	sqlDriverLogger.Debug("生成的随机数为", zap.Int("randNum", randNum), zap.Int("step", step), zap.Any("range", ranges), zap.Int("len range", len(ranges)))
 	// 从头开始找起，落在哪个区间
 	for _, temp := range ranges {
 		if randNum > temp.begin && randNum <= temp.end {
@@ -78,6 +75,5 @@ func (w weightPolicy) resolve(conns []*weightResolve) *connectionItem {
 		}
 	}
 
-	sqlDriverLogger.Warn("按权重找不到连接")
 	return conns[w.R.Intn(len(conns))].conn
 }

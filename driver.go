@@ -7,12 +7,10 @@ import (
 	"math/rand"
 	"time"
 
-	"code.com/tars/goframework/kissgo/appzaplog/zap"
 	"github.com/go-sql-driver/mysql"
 )
 
 func init() {
-	sqlDriverLogger.Info("cjmysql driver 初始化")
 	cjSqlDriver := &CJSqlDriver{Driver: &mysql.MySQLDriver{}}
 	sql.Register("cjmysql", cjSqlDriver)
 }
@@ -37,12 +35,9 @@ type CJSqlDriver struct {
 
 func (d CJSqlDriver) Open(dsn string) (driver.Conn, error) {
 
-	sqlDriverLogger.Info("dsnes", zap.String("dsn", dsn))
-
 	var dsns []*Dsn
 	err := json.Unmarshal([]byte(dsn), &dsns)
 	if err != nil {
-		sqlDriverLogger.Warn("配置 dsn 异常,换做旧方式", zap.Error(err))
 		dsns = make([]*Dsn, 0, 1)
 		// 构造主从连接
 		dsns = append(dsns, &Dsn{

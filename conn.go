@@ -22,6 +22,8 @@ type cjConnectionProxy struct {
 
 func (c *cjConnectionProxy) Prepare(query string) (driver.Stmt, error) {
 
+	defaultLogger.Print("prepare sql", query)
+
 	var useReadConn *connectionItem
 	// 不在事务中
 	if !c.inTransaction {
@@ -55,6 +57,7 @@ func (c *cjConnectionProxy) Prepare(query string) (driver.Stmt, error) {
 
 func (c *cjConnectionProxy) Close() error {
 
+	defaultLogger.Print("Close")
 	for index := range c.all {
 		if err := c.all[index].Close(); err != nil {
 			return err
@@ -65,7 +68,7 @@ func (c *cjConnectionProxy) Close() error {
 }
 
 func (c *cjConnectionProxy) Begin() (driver.Tx, error) {
-
+	defaultLogger.Print("Begin")
 	conn := c.policy.ResolveWrite(c.write)
 	tx, err := conn.Begin()
 	if err != nil {

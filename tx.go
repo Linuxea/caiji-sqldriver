@@ -10,6 +10,7 @@ type CjSqlTx struct {
 }
 
 func (tx *CjSqlTx) Commit() (err error) {
+	defaultLogger.Print("commit", tx.mc.useSourceConn.flag)
 	if err := tx.Tx.Commit(); err != nil {
 		return err
 	}
@@ -20,6 +21,7 @@ func (tx *CjSqlTx) Commit() (err error) {
 }
 
 func (tx *CjSqlTx) Rollback() (err error) {
+	defaultLogger.Print("rollback", tx.mc.useSourceConn.flag)
 	if err := tx.Tx.Rollback(); err != nil {
 		return err
 	}

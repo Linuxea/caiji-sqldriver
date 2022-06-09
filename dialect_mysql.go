@@ -11,4 +11,5 @@ func init() {
 	}
 
 	gorm.RegisterDialect("cjmysql", dialect)
+	defaultLogger.Print("registe cjmysql")
 }

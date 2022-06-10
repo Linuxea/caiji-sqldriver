@@ -34,14 +34,14 @@ func (c *cjConnectionProxy) Prepare(query string) (driver.Stmt, error) {
 				useReadConn = c.policy.ResolveRead(c.all)
 			}
 
-			CjSqlDriverLogger.Print(fmt.Sprintf("prepare sql:%s flag:%s", query, useReadConn.flag))
+			CjSqlDriverLogger.Log(fmt.Sprintf("prepare sql:%s flag:%s", query, useReadConn.flag))
 			return useReadConn.Prepare(query)
 		}
 	}
 
 	// 在事务中, 找到事务中使用的连接
 	if c.useSourceConn != nil {
-		CjSqlDriverLogger.Print(fmt.Sprintf("prepare sql:%s flag:%s", query, c.useSourceConn.flag))
+		CjSqlDriverLogger.Log(fmt.Sprintf("prepare sql:%s flag:%s", query, c.useSourceConn.flag))
 		return c.useSourceConn.Prepare(query)
 	}
 
@@ -53,13 +53,13 @@ func (c *cjConnectionProxy) Prepare(query string) (driver.Stmt, error) {
 		useWriteConn = c.policy.ResolveWrite(c.write)
 	}
 
-	CjSqlDriverLogger.Print(fmt.Sprintf("prepare sql:%s flag:%s", query, useWriteConn.flag))
+	CjSqlDriverLogger.Log(fmt.Sprintf("prepare sql:%s flag:%s", query, useWriteConn.flag))
 	return useWriteConn.Prepare(query)
 }
 
 func (c *cjConnectionProxy) Close() error {
 
-	CjSqlDriverLogger.Print("Close")
+	CjSqlDriverLogger.Log("Close")
 	for index := range c.all {
 		if err := c.all[index].Close(); err != nil {
 			return err
@@ -70,7 +70,7 @@ func (c *cjConnectionProxy) Close() error {
 }
 
 func (c *cjConnectionProxy) Begin() (driver.Tx, error) {
-	CjSqlDriverLogger.Print("Begin")
+	CjSqlDriverLogger.Log("Begin")
 	conn := c.policy.ResolveWrite(c.write)
 	tx, err := conn.Begin()
 	if err != nil {

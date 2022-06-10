@@ -11,5 +11,5 @@ func init() {
 	}
 
 	gorm.RegisterDialect("cjmysql", dialect)
-	CjSqlDriverLogger.Print("registe cjmysql")
+	CjSqlDriverLogger.Log("注册 cjmysql 驱动")
 }

@@ -35,7 +35,7 @@ type CJSqlDriver struct {
 
 func (d CJSqlDriver) Open(dsn string) (driver.Conn, error) {
 
-	defaultLogger.Print("open dsn", dsn)
+	CjSqlDriverLogger.Print("open dsn", dsn)
 
 	var dsns []*Dsn
 	err := json.Unmarshal([]byte(dsn), &dsns)

@@ -31,3 +31,86 @@
 ![连接示意图](https://res.caijiyouxi.com/static/activity/pre/2022-06-10-17-22-02.6694.png)
 
 
+
+### 示例
+
+#### 配置多个 dsn
+```golang
+    // 代理
+	proxy := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		config.Cfg.DbRW.User,
+		config.Cfg.DbRW.Password,
+		config.Cfg.DbRW.Host,
+		config.Cfg.DbRW.Port,
+		config.Cfg.DbRW.Database,
+	)
+
+	// 直连读
+	directWrite := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		config.Cfg.DbW.User,
+		config.Cfg.DbW.Password,
+		config.Cfg.DbW.Host,
+		config.Cfg.DbW.Port,
+		config.Cfg.DbW.Database,
+	)
+
+    // 只读库 r1
+	r1 := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		config.Cfg.DbR2.User,
+		config.Cfg.DbR2.Password,
+		"rr-wz9h6ed1065k1l4se.mysql.rds.aliyuncs.com",
+		config.Cfg.DbR2.Port,
+		config.Cfg.DbR2.Database,
+	)
+
+    // 只读库 r2
+	r2 := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		config.Cfg.DbR2.User,
+		config.Cfg.DbR2.Password,
+		config.Cfg.DbR2.Host,
+		config.Cfg.DbR2.Port,
+		config.Cfg.DbR2.Database,
+	)
+```
+
+
+#### 整合成一个 dsn
+```golang
+    // 根据需求进行读,写权重的配置,以及 `Flag` 配置(flag 用于日志输出时观测对应的执行数据库, 可自定义)
+	dsns := []*cjsqldriver.Dsn{
+		{
+			ReadWeight:  1,
+			WriteWeight: 1,
+			Dsn:         proxy,
+			Flag:        "proxy",
+		},
+		{
+			ReadWeight:  0,
+			WriteWeight: 1,
+			Dsn:         directWrite,
+			Flag:        "directWrite",
+		},
+		{
+			ReadWeight:  1,
+			WriteWeight: 0,
+			Dsn:         r1,
+			Flag:        "r1",
+		},
+		{
+			ReadWeight:  2,
+			WriteWeight: 0,
+			Dsn:         r2,
+			Flag:        "r2",
+		},
+	}
+
+    //进行 json 序列化
+	dsnsJson, _ := json.Marshal(dsns)
+```
+
+
+####
+```golang
+    // 使用 `cjmysql` 驱动创建连接
+    con, err = gorm.Open("cjmysql", dsnsJson)
+```
